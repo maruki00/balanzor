@@ -16,12 +16,14 @@ var (
 )
 
 type Server struct {
-	Addr    string
-	isAlive bool
+	Addr                string
+	isAlive             bool
+	LastTimeOutResponse int
+	Wieght              int
+	Proxy               *httputil.ReverseProxy
 }
 
 func ConfigParse(pathCfg string) map[string]any {
-
 	return map[string]any{}
 }
 
