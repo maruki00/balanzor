@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"math"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -43,7 +45,7 @@ func reverseRequest(u string) error {
 	return http.ListenAndServe(":8082", nil)
 }
 
-func chechServerAlive(u string, timeOut int) bool {
+func checkServerAlive(u string, timeOut int) bool {
 	_, err := net.DialTimeout("udp", u, time.Duration(time.Second*time.Duration(timeOut)))
 	return err != nil
 }
@@ -58,16 +60,37 @@ func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 				fmt.Println("check server: ", i)
 			}
 		case <-ctx.Done():
-			break
+			return
 		}
 	}
-
 }
 
 func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	slog.Info("loading ...")
+	srvs := []string{
+		"http://localhost:9090",
+		"http://localhost:9091",
+		"http://localhost:9092",
+		"http://localhost:9093",
+		"http://localhost:9094",
+		"http://localhost:9095",
+	}
+
+	for _, srv := range srvs {
+		servers = append(servers, Server{
+			Addr:                srv,
+			isAlive:             checkServerAlive(srv),
+			LastTimeOutResponse: math.MaxInt,
+			Wieght:              0,
+			Proxy:               nil,
+		})
+	}
+
+	slog.Info("started")
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
