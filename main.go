@@ -46,19 +46,27 @@ func reverseRequest(u string) error {
 }
 
 func checkServerAlive(u string, timeOut int) bool {
-	_, err := net.DialTimeout("udp", u, time.Duration(time.Second*time.Duration(timeOut)))
-	return err == nil
+	conn, err := net.DialTimeout("tcp", u, time.Duration(time.Second*time.Duration(timeOut)))
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	defer conn.Close()
+
+	return true
 }
 
 func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
-	t := time.NewTicker(time.Second * 2)
+	t := time.NewTicker(time.Second * 20)
 	for {
 		select {
 		case <-t.C:
-			for i := range 10 {
-				fmt.Println("check server: ", i)
+			for _, server := range servers {
+				server.isAlive = checkServerAlive(server.Addr, 1)
+				fmt.Printf("%#v\n", server)
 			}
+
 		case <-ctx.Done():
 			return
 		}
@@ -72,12 +80,12 @@ func main() {
 
 	slog.Info("loading ...")
 	srvs := []string{
-		"http://localhost:9090",
-		"http://localhost:9091",
-		"http://localhost:9092",
-		"http://localhost:9093",
-		"http://localhost:9094",
-		"http://localhost:9095",
+		"localhost:9090",
+		"localhost:9091",
+		"localhost:9092",
+		"localhost:9093",
+		"localhost:9094",
+		"localhost:9095",
 	}
 
 	for _, srv := range srvs {
