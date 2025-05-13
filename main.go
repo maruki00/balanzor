@@ -48,9 +48,9 @@ func chechServerAlive(u string, timeOut int) bool {
 	return err != nil
 }
 
-func checkServerHealth(ctx context.Context) {
-
-	t := time.NewTicker(time.Minute * 2)
+func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
+	defer wg.Done()
+	t := time.NewTicker(time.Second * 2)
 	for {
 		select {
 		case <-t.C:
@@ -62,8 +62,6 @@ func checkServerHealth(ctx context.Context) {
 		}
 	}
 
-	timer := time.NewTimer(time.Duration(time.Second * 1))
-	<-timer.C
 }
 
 func main() {
@@ -72,7 +70,8 @@ func main() {
 	defer cancel()
 
 	wg := &sync.WaitGroup{}
-	go checkServerHealth(ctx)
+	wg.Add(1)
+	go checkServerHealth(ctx, wg)
 	wg.Wait()
 
 }
