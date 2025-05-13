@@ -47,7 +47,7 @@ func reverseRequest(u string) error {
 
 func checkServerAlive(u string, timeOut int) bool {
 	_, err := net.DialTimeout("udp", u, time.Duration(time.Second*time.Duration(timeOut)))
-	return err != nil
+	return err == nil
 }
 
 func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
@@ -83,11 +83,15 @@ func main() {
 	for _, srv := range srvs {
 		servers = append(servers, Server{
 			Addr:                srv,
-			isAlive:             checkServerAlive(srv),
+			isAlive:             checkServerAlive(srv, 1),
 			LastTimeOutResponse: math.MaxInt,
 			Wieght:              0,
 			Proxy:               nil,
 		})
+	}
+
+	for _, srv := range servers {
+		fmt.Printf("%#v\n", srv)
 	}
 
 	slog.Info("started")
