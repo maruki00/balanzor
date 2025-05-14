@@ -25,10 +25,10 @@ func (_this *Server) CheckServerAlive(timeOut int) bool {
 		conn, err := net.DialTimeout("tcp", _this.Addr, time.Duration(time.Second*time.Duration(timeOut)))
 		defer conn.Close()
 		responseTime := time.Since(start).Seconds()
-		fmt.Println("response timeout : ", conn.)
+		fmt.Println("response timeout : ", responseTime)
 		if err == nil {
 			_this.IsAlive = true
-		_this.LastTimeOutResponse = int(responseTime)
+			_this.LastTimeOutResponse = int(responseTime)
 			break
 		}
 		ATTEMPTS--

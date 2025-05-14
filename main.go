@@ -2,8 +2,8 @@ package main
 
 import (
 	"balazor/algos"
+	"balazor/types"
 	"context"
-	"fmt"
 	"log/slog"
 	"math"
 	"net/http"
@@ -29,13 +29,10 @@ func reverseRequest(u string) error {
 }
 
 func main() {
-
 	algo := "round-roubin"
-	timeOut := 1
-
+	// timeOut := 1
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	slog.Info("loading ...")
 	srvs := []string{
 		"localhost:9090",
@@ -48,17 +45,13 @@ func main() {
 	var lb algos.Algo
 	switch algo {
 	case "round-roubin":
-		lb = &algos.RoundRoubin
-		{
-
-		}
+		lb = &algos.RoundRoubin{}
 		break
 	default:
 		panic("algo not supported")
 	}
-
 	for _, srv := range srvs {
-		srv := &Server{
+		srv := &types.Server{
 			Addr:                srv,
 			isAlive:             false,
 			LastTimeOutResponse: math.MaxInt,
@@ -68,15 +61,9 @@ func main() {
 		lb.AppendServer(srv)
 	}
 
-	for _, srv := range servers {
-		fmt.Printf("%#v\n", srv)
-	}
-
 	slog.Info("started")
-
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
-	go checkServerHealth(ctx, wg)
+	go lb.CheckServersHealth(ctx, wg)
 	wg.Wait()
-
 }

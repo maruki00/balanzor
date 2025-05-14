@@ -25,7 +25,7 @@ func (_this *RoundRoubin) GetNextNode() *types.Server {
 	return nil
 }
 
-func (_this *RoundRoubin) CheckServerHealth(ctx context.Context, wg *sync.WaitGroup) {
+func (_this *RoundRoubin) CheckServersHealth(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	t := time.NewTicker(time.Second * 20)
 	for {
