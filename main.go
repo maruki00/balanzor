@@ -1,6 +1,8 @@
 package main
 
 import (
+	"balazor/algos"
+	"balazor/enums"
 	"context"
 	"fmt"
 	"log/slog"
@@ -9,7 +11,6 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"sync"
-	"time"
 )
 
 func ConfigParse(pathCfg string) map[string]any {
@@ -32,24 +33,10 @@ func reverseRequest(u string) error {
 	return http.ListenAndServe(":8082", nil)
 }
 
-func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
-	defer wg.Done()
-	t := time.NewTicker(time.Second * 20)
-	for {
-		select {
-		case <-t.C:
-			for _, server := range servers {
-				_ = server.CheckServerAlive(1)
-				fmt.Printf("%#v\n", server)
-			}
-
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
 func main() {
+
+	algo := "round-roubin"
+	timeOut := 1
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -62,6 +49,14 @@ func main() {
 		"localhost:9093",
 		"localhost:9094",
 		"localhost:9095",
+	}
+	var lb interface{}
+	switch algo {
+	case enums.RoundRo:
+		lb = &algos.RoundRoubin{}
+		break
+	default:
+		panic("algo not supported")
 	}
 
 	for _, srv := range srvs {

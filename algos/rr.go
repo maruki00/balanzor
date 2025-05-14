@@ -1,4 +1,4 @@
-package main
+package algos
 
 import (
 	"balazor/types"
@@ -20,7 +20,7 @@ func (_this *RoundRoubin) GetNextNode() *types.Server {
 			continue
 		}
 		_this.CurrentNode = (i % _this.ServersLenght) + 1
-		return _this.Backends[i%_this.ServersLenght]
+		return _this.Servers[i%_this.ServersLenght]
 	}
 	return nil
 }
