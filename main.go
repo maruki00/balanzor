@@ -26,8 +26,8 @@ func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 		rw.Write([]byte("server not available."))
 		return
 	}
-
 	curNode.Proxy.ServeHTTP(rw, r)
+	curNode.Wieght--
 }
 
 func main() {
