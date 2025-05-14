@@ -45,12 +45,15 @@ func (_this *RoundRoubin) CheckServerHealth(ctx context.Context, wg *sync.WaitGr
 func (_this *RoundRoubin) AppendServer(server *types.Server) {
 	_this.Servers = append(_this.Servers, server)
 }
-func (_this *RoundRoubin) SetServers([]*types.Server) {
-	return _this.Servers
+
+func (_this *RoundRoubin) SetServers(servers []*types.Server) {
+	copy(_this.Servers, servers)
 }
+
 func (_this *RoundRoubin) GetServers() []*types.Server {
 	return _this.Servers
 }
+
 func (_this *RoundRoubin) GetServer(index int) *types.Server {
 	return _this.Servers[index]
 }

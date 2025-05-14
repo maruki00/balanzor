@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"net"
 	"net/http/httputil"
 	"sync"
@@ -20,10 +21,14 @@ func (_this *Server) CheckServerAlive(timeOut int) bool {
 	ATTEMPTS := 3
 	_this.IsAlive = false
 	for ATTEMPTS <= 0 {
+		start := time.Now()
 		conn, err := net.DialTimeout("tcp", _this.Addr, time.Duration(time.Second*time.Duration(timeOut)))
-		conn.Close()
+		defer conn.Close()
+		responseTime := time.Since(start).Seconds()
+		fmt.Println("response timeout : ", conn.)
 		if err == nil {
 			_this.IsAlive = true
+		_this.LastTimeOutResponse = int(responseTime)
 			break
 		}
 		ATTEMPTS--

@@ -2,7 +2,6 @@ package main
 
 import (
 	"balazor/algos"
-	"balazor/enums"
 	"context"
 	"fmt"
 	"log/slog"
@@ -12,10 +11,6 @@ import (
 	"net/url"
 	"sync"
 )
-
-func ConfigParse(pathCfg string) map[string]any {
-	return map[string]any{}
-}
 
 func reverseRequest(u string) error {
 	pu, err := url.Parse(u)
@@ -50,23 +45,27 @@ func main() {
 		"localhost:9094",
 		"localhost:9095",
 	}
-	var lb interface{}
+	var lb algos.Algo
 	switch algo {
-	case enums.RoundRo:
-		lb = &algos.RoundRoubin{}
+	case "round-roubin":
+		lb = &algos.RoundRoubin
+		{
+
+		}
 		break
 	default:
 		panic("algo not supported")
 	}
 
 	for _, srv := range srvs {
-		lb.(algos.RoundRoubin).Servers = append(lb.servers, Server{
+		srv := &Server{
 			Addr:                srv,
-			isAlive:             checkServerAlive(srv, 1),
+			isAlive:             false,
 			LastTimeOutResponse: math.MaxInt,
 			Wieght:              0,
 			Proxy:               nil,
-		})
+		}
+		lb.AppendServer(srv)
 	}
 
 	for _, srv := range servers {
