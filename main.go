@@ -4,30 +4,31 @@ import (
 	"balazor/algos"
 	"balazor/types"
 	"context"
+	"fmt"
 	"log/slog"
 	"math"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"sync"
 )
 
-func reverseRequest(u string) error {
-	pu, err := url.Parse(u)
-	if err != nil {
-		return err
-	}
-	reverseProxy := httputil.NewSingleHostReverseProxy(pu)
-	handler := func(proxy *httputil.ReverseProxy) func(rw http.ResponseWriter, r *http.Request) {
-		return func(rw http.ResponseWriter, r *http.Request) {
-			rw.Write([]byte("Done"))
-			proxy.ServeHTTP(rw, r)
-		}
-	}
-
-	http.HandleFunc("/lb", handler(reverseProxy))
-	slog.Info("Start Server 0.0.0.0:8082")
-	return http.ListenAndServe(":8082", nil)
+func reverseRequest() error {
+	// curNode := lb.GetNextNode()
+	// if curNode == nil {
+	// 	return errors.New("No Server is alive")
+	// }
+	//
+	// pu, err := url.Parse(curNode.Addr)
+	// if err != nil {
+	// 	return err
+	// }
+	// reverseProxy := httputil.NewSingleHostReverseProxy(pu)
+	// handler := func(proxy *httputil.ReverseProxy) func(rw http.ResponseWriter, r *http.Request) {
+	// 	return func(rw http.ResponseWriter, r *http.Request) {
+	// 		rw.Write([]byte("Done"))
+	// 		proxy.ServeHTTP(rw, r)
+	// 	}
+	// }
+	return nil
 }
 
 func main() {
@@ -62,6 +63,14 @@ func main() {
 		}
 		lb.AppendServer(srv)
 	}
+	//reverseRequest(lb)
+
+	http.HandleFunc("/lb", func(rw http.ResponseWriter, r *http.Request) {
+		fmt.Println("hello world")
+	})
+
+	slog.Info("Start Server 0.0.0.0:8082")
+	http.ListenAndServe(":8082", nil)
 
 	slog.Info("started")
 	wg := &sync.WaitGroup{}

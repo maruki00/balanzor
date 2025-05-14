@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"net"
 	"net/http/httputil"
 	"time"
@@ -19,12 +18,10 @@ type Server struct {
 func (_this *Server) CheckServerAlive(timeOut int) bool {
 	ATTEMPTS := 3
 	_this.IsAlive = false
-	for ATTEMPTS <= 0 {
+	for ATTEMPTS > 0 {
 		start := time.Now()
-		conn, err := net.DialTimeout("tcp", _this.Addr, time.Duration(time.Second*time.Duration(timeOut)))
-		defer conn.Close()
-		responseTime := time.Since(start).Seconds()
-		fmt.Println("response timeout : ", responseTime)
+		_, err := net.DialTimeout("tcp", _this.Addr, time.Duration(time.Second*time.Duration(timeOut)))
+		responseTime := time.Since(start).Milliseconds()
 		if err == nil {
 			_this.IsAlive = true
 			_this.LastTimeOutResponse = int(responseTime)

@@ -20,7 +20,9 @@ func (_this *RoundRoubin) GetNextNode() *types.Server {
 			continue
 		}
 		_this.CurrentNode = (i % _this.ServersLenght) + 1
-		return _this.Servers[i%_this.ServersLenght]
+		node := _this.Servers[i%_this.ServersLenght]
+		node.Wieght++
+		return node
 	}
 	return nil
 }
