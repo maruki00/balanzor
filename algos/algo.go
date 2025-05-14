@@ -3,12 +3,11 @@ package algos
 import (
 	"balazor/types"
 	"context"
-	"sync"
 )
 
 type Algo interface {
 	GetNextNode() *types.Server
-	CheckServersHealth(context.Context, *sync.WaitGroup)
+	CheckServersHealth(context.Context)
 	AppendServer(*types.Server)
 	SetServers([]*types.Server)
 	GetServers() []*types.Server

@@ -5,22 +5,25 @@ import (
 	"balazor/types"
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"math"
 	"net/http"
 	"net/http/httputil"
-	"sync"
+	"net/url"
 )
 
 func reverseRequest(lb algos.Algo, rw http.ResponseWriter, r *http.Request) error {
 	curNode := lb.GetNextNode()
 	if curNode == nil {
-		return errors.New("No Server is alive")
+		return errors.New("no Server is alive")
 	}
-	pu. err := 
-	reverseProxy := httputil.NewSingleHostReverseProxy()
-	reverseProxy.ServeHTTP(rw, r)	
+	pu, err := url.Parse(curNode.Addr)
+	if err != nil {
+		panic(err)
+	}
+
+	reverseProxy := httputil.NewSingleHostReverseProxy(pu)
+	reverseProxy.ServeHTTP(rw, r)
 	return nil
 }
 
@@ -42,7 +45,6 @@ func main() {
 	switch algo {
 	case "round-roubin":
 		lb = &algos.RoundRoubin{}
-		break
 	default:
 		panic("algo not supported")
 	}
@@ -56,19 +58,18 @@ func main() {
 		}
 		lb.AppendServer(srv)
 	}
-	//reverseRequest(lb)
 
+	slog.Info("started")
+
+	go lb.CheckServersHealth(ctx)
 	http.HandleFunc("/lb", func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Println("hello world")
-		reverseRequest(lb, rw, r)
+		err := reverseRequest(lb, rw, r)
+		if err != nil {
+			rw.Write([]byte(err.Error()))
+		}
 	})
 
 	slog.Info("Start Server 0.0.0.0:8082")
 	http.ListenAndServe(":8082", nil)
 
-	slog.Info("started")
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	go lb.CheckServersHealth(ctx, wg)
-	wg.Wait()
 }
