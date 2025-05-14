@@ -30,13 +30,14 @@ func (_this *RoundRoubin) GetServer(index int) *types.Server {
 	return _this.Servers[index]
 }
 
-func (_this *RoundRoubin) GetNextNode() *types.Server {
+func (_this *RoundRoubin) GetCurrentNode() *types.Server {
 	for i := range _this.ServersLenght {
-		if !_this.Servers[(i+_this.CurrentNode)%_this.ServersLenght].IsAlive {
+		currIndex := (i + _this.CurrentNode) % _this.ServersLenght
+		if !_this.Servers[currIndex].IsAlive || !_this.Servers[currIndex].CheckServerAlive(1) {
 			continue
 		}
-		_this.CurrentNode = (i % _this.ServersLenght) + 1
-		node := _this.Servers[i%_this.ServersLenght]
+		_this.CurrentNode = currIndex + 1
+		node := _this.Servers[currIndex]
 		node.Wieght++
 		return node
 	}

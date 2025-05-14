@@ -18,13 +18,13 @@ var (
 )
 
 func balancer(rw http.ResponseWriter, r *http.Request) {
-
+	go reverseRequest(rw, r)
 }
 func reverseRequest(rw http.ResponseWriter, r *http.Request) {
-	curNode := lb.GetNextNode()
+	curNode := lb.GetCurrentNode()
 	if curNode == nil {
-		panic("error ")
-		// return errors.New("no Server is alive")
+		rw.Write([]byte("server not available."))
+		return
 	}
 
 	curNode.Proxy.ServeHTTP(rw, r)
@@ -68,13 +68,12 @@ func main() {
 		proxy := httputil.NewSingleHostReverseProxy(srvUri)
 		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
 			log.Printf("[%s] %s\n", srvUri.Host, e.Error())
-			select {
-			case <-time.After(10 * time.Millisecond):
-				proxy.ServeHTTP(writer, request.WithContext(ctx))
-			}
 
-			log.Printf("%s(%s) Attempting retry %d\n", request.RemoteAddr, request.URL.Path)
+			<-time.After(10 * time.Millisecond)
+			proxy.ServeHTTP(writer, request.WithContext(ctx))
+
 			balancer(writer, request.WithContext(ctx))
+			time.Sleep(time.Millisecond * 10)
 		}
 		srv.Proxy = proxy
 		lb.AppendServer(srv)

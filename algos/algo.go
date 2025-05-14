@@ -6,7 +6,7 @@ import (
 )
 
 type Algo interface {
-	GetNextNode() *types.Server
+	GetCurrentNode() *types.Server
 	CheckServersHealth(context.Context)
 	AppendServer(*types.Server)
 	SetServers([]*types.Server)
