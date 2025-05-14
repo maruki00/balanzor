@@ -25,7 +25,7 @@ func (_this *RoundRoubin) GetNextNode() *types.Server {
 	return nil
 }
 
-func (_this *RoundRoubin) checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
+func (_this *RoundRoubin) CheckServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	t := time.NewTicker(time.Second * 20)
 	for {
@@ -40,4 +40,17 @@ func (_this *RoundRoubin) checkServerHealth(ctx context.Context, wg *sync.WaitGr
 			return
 		}
 	}
+}
+
+func (_this *RoundRoubin) AppendServer(server *types.Server) {
+	_this.Servers = append(_this.Servers, server)
+}
+func (_this *RoundRoubin) SetServers([]*types.Server) {
+	return _this.Servers
+}
+func (_this *RoundRoubin) GetServers() []*types.Server {
+	return _this.Servers
+}
+func (_this *RoundRoubin) GetServer(index int) *types.Server {
+	return _this.Servers[index]
 }

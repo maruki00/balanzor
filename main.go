@@ -60,7 +60,7 @@ func main() {
 	}
 
 	for _, srv := range srvs {
-		servers = append(servers, Server{
+		lb.(algos.RoundRoubin).Servers = append(lb.servers, Server{
 			Addr:                srv,
 			isAlive:             checkServerAlive(srv, 1),
 			LastTimeOutResponse: math.MaxInt,
