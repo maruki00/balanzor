@@ -24,7 +24,9 @@ func reverseRequest(u string) error {
 			proxy.ServeHTTP(rw, r)
 		}
 	}
+
 	http.HandleFunc("/lb", handler(reverseProxy))
+	slog.Info("Start Server 0.0.0.0:8082")
 	return http.ListenAndServe(":8082", nil)
 }
 
@@ -53,7 +55,7 @@ func main() {
 	for _, srv := range srvs {
 		srv := &types.Server{
 			Addr:                srv,
-			isAlive:             false,
+			IsAlive:             false,
 			LastTimeOutResponse: math.MaxInt,
 			Wieght:              0,
 			Proxy:               nil,

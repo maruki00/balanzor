@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"net"
 	"net/http/httputil"
-	"sync"
 	"time"
 )
 
 type Server struct {
-	sync.RWMutex
+	//mux sync.RWMutex
 	Addr                string
 	IsAlive             bool
 	LastTimeOutResponse int
