@@ -17,15 +17,6 @@ var (
 	servers []Server
 )
 
-type Server struct {
-	sync.RWMutex
-	Addr                string
-	isAlive             bool
-	LastTimeOutResponse int
-	Wieght              int
-	Proxy               *httputil.ReverseProxy
-}
-
 func ConfigParse(pathCfg string) map[string]any {
 	return map[string]any{}
 }
