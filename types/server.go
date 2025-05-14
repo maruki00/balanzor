@@ -16,18 +16,17 @@ type Server struct {
 	Proxy               *httputil.ReverseProxy
 }
 
-func (_this *Server) checkServerAlive(timeOut int) bool {
+func (_this *Server) CheckServerAlive(timeOut int) bool {
 	ATTEMPTS := 3
-	for {
+	_this.IsAlive = false
+	for ATTEMPTS <= 0 {
 		conn, err := net.DialTimeout("tcp", _this.Addr, time.Duration(time.Second*time.Duration(timeOut)))
 		conn.Close()
 		if err == nil {
-			return true
-		}
-		if ATTEMPTS <= 0 {
-			return false
+			_this.IsAlive = true
+			break
 		}
 		ATTEMPTS--
 	}
-	return true
+	return _this.IsAlive
 }

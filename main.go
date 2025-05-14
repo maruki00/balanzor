@@ -5,16 +5,11 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
-	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
 	"time"
-)
-
-var (
-	servers []Server
 )
 
 func ConfigParse(pathCfg string) map[string]any {
@@ -37,22 +32,6 @@ func reverseRequest(u string) error {
 	return http.ListenAndServe(":8082", nil)
 }
 
-func checkServerAlive(u string, timeOut int) bool {
-	ATTEMPTS := 3
-	for {
-		conn, err := net.DialTimeout("tcp", u, time.Duration(time.Second*time.Duration(timeOut)))
-		conn.Close()
-		if err == nil {
-			return true
-		}
-		if ATTEMPTS <= 0 {
-			return false
-		}
-		ATTEMPTS--
-	}
-	return true
-}
-
 func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	t := time.NewTicker(time.Second * 20)
@@ -60,7 +39,7 @@ func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 		select {
 		case <-t.C:
 			for _, server := range servers {
-				server.isAlive = checkServerAlive(server.Addr, 1)
+				server.isAlive = saerver.CheckServerAlive(1)
 				fmt.Printf("%#v\n", server)
 			}
 
