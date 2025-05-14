@@ -4,6 +4,7 @@ import (
 	"balazor/algos"
 	"balazor/types"
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"math"
@@ -26,6 +27,7 @@ func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 		rw.Write([]byte("server not available."))
 		return
 	}
+	fmt.Println(curNode.Addr, " --> ", curNode.Wieght)
 	curNode.Proxy.ServeHTTP(rw, r)
 	curNode.Wieght--
 }
@@ -82,7 +84,9 @@ func main() {
 	slog.Info("started")
 
 	go lb.CheckServersHealth(ctx)
-	http.HandleFunc("/lb", reverseRequest)
+	http.HandleFunc("/lb", func(writer http.ResponseWriter, request *http.Request) {
+		go reverseRequest(writer, request)
+	})
 
 	slog.Info("Start Server 0.0.0.0:8082")
 	http.ListenAndServe(":8082", nil)
