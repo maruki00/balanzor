@@ -4,27 +4,30 @@ import (
 	"balazor/algos"
 	"balazor/types"
 	"context"
-	"errors"
+	"log"
 	"log/slog"
 	"math"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
 
-func reverseRequest(lb algos.Algo, rw http.ResponseWriter, r *http.Request) error {
+var (
+	lb algos.Algo
+)
+
+func balancer(rw http.ResponseWriter, r *http.Request) {
+
+}
+func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 	curNode := lb.GetNextNode()
 	if curNode == nil {
-		return errors.New("no Server is alive")
-	}
-	pu, err := url.Parse(curNode.Addr)
-	if err != nil {
-		panic(err)
+		panic("error ")
+		// return errors.New("no Server is alive")
 	}
 
-	reverseProxy := httputil.NewSingleHostReverseProxy(pu)
-	reverseProxy.ServeHTTP(rw, r)
-	return nil
+	curNode.Proxy.ServeHTTP(rw, r)
 }
 
 func main() {
@@ -34,14 +37,13 @@ func main() {
 	defer cancel()
 	slog.Info("loading ...")
 	srvs := []string{
-		"localhost:9090",
-		"localhost:9091",
-		"localhost:9092",
-		"localhost:9093",
-		"localhost:9094",
-		"localhost:9095",
+		"http://127.0.0.1:9090",
+		"http://127.0.0.1:9091",
+		"http://127.0.0.1:9092",
+		"http://127.0.0.1:9093",
+		"http://127.0.0.1:9094",
+		"http://127.0.0.1:9095",
 	}
-	var lb algos.Algo
 	switch algo {
 	case "round-roubin":
 		lb = &algos.RoundRoubin{}
@@ -49,25 +51,39 @@ func main() {
 		panic("algo not supported")
 	}
 	for _, srv := range srvs {
+
+		srvUri, err := url.Parse(srv)
+		if err != nil {
+			panic("error : " + err.Error())
+		}
+
 		srv := &types.Server{
-			Addr:                srv,
+			Addr:                srvUri.Host,
 			IsAlive:             false,
 			LastTimeOutResponse: math.MaxInt,
 			Wieght:              0,
 			Proxy:               nil,
 		}
+
+		proxy := httputil.NewSingleHostReverseProxy(srvUri)
+		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
+			log.Printf("[%s] %s\n", srvUri.Host, e.Error())
+			select {
+			case <-time.After(10 * time.Millisecond):
+				proxy.ServeHTTP(writer, request.WithContext(ctx))
+			}
+
+			log.Printf("%s(%s) Attempting retry %d\n", request.RemoteAddr, request.URL.Path)
+			balancer(writer, request.WithContext(ctx))
+		}
+		srv.Proxy = proxy
 		lb.AppendServer(srv)
 	}
 
 	slog.Info("started")
 
 	go lb.CheckServersHealth(ctx)
-	http.HandleFunc("/lb", func(rw http.ResponseWriter, r *http.Request) {
-		err := reverseRequest(lb, rw, r)
-		if err != nil {
-			rw.Write([]byte(err.Error()))
-		}
-	})
+	http.HandleFunc("/lb", reverseRequest)
 
 	slog.Info("Start Server 0.0.0.0:8082")
 	http.ListenAndServe(":8082", nil)

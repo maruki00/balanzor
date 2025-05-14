@@ -3,11 +3,12 @@ package types
 import (
 	"net"
 	"net/http/httputil"
+	"sync"
 	"time"
 )
 
 type Server struct {
-	//mux sync.RWMutex
+	sync.RWMutex
 	Addr                string
 	IsAlive             bool
 	LastTimeOutResponse int
