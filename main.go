@@ -39,7 +39,7 @@ func checkServerHealth(ctx context.Context, wg *sync.WaitGroup) {
 		select {
 		case <-t.C:
 			for _, server := range servers {
-				server.isAlive = saerver.CheckServerAlive(1)
+				_ = server.CheckServerAlive(1)
 				fmt.Printf("%#v\n", server)
 			}
 
