@@ -18,6 +18,7 @@ var (
 )
 
 type Server struct {
+	sync.RWMutex
 	Addr                string
 	isAlive             bool
 	LastTimeOutResponse int
@@ -46,13 +47,18 @@ func reverseRequest(u string) error {
 }
 
 func checkServerAlive(u string, timeOut int) bool {
-	conn, err := net.DialTimeout("tcp", u, time.Duration(time.Second*time.Duration(timeOut)))
-	if err != nil {
-		fmt.Println(err.Error())
-		return false
+	ATTEMPTS := 3
+	for {
+		conn, err := net.DialTimeout("tcp", u, time.Duration(time.Second*time.Duration(timeOut)))
+		conn.Close()
+		if err == nil {
+			return true
+		}
+		if ATTEMPTS <= 0 {
+			return false
+		}
+		ATTEMPTS--
 	}
-	defer conn.Close()
-
 	return true
 }
 
