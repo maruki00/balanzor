@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+type Option func(*Server)
 type Server struct {
 	sync.RWMutex
 	Addr                string
@@ -14,6 +15,21 @@ type Server struct {
 	LastTimeOutResponse int
 	Wieght              int
 	Proxy               *httputil.ReverseProxy
+}
+
+func NewServer(options ...Option) *Server {
+	s := Server{
+		Addr:                "127.0.0.1",
+		IsAlive:             false,
+		LastTimeOutResponse: 0,
+		Wieght:              0,
+		Proxy:               nil,
+	}
+
+	for _, opt := range options {
+		opt(&s)
+	}
+	return &s
 }
 
 func (_this *Server) CheckServerAlive(timeOut int) bool {
@@ -36,4 +52,33 @@ func (_this *Server) CheckServerAlive(timeOut int) bool {
 		ATTEMPTS--
 	}
 	return _this.IsAlive
+}
+
+func WithAddress(addr string) Option {
+	return func(s *Server) {
+		s.Addr = addr
+	}
+}
+func WithIsAlive(isAlive bool) Option {
+	return func(s *Server) {
+		s.IsAlive = isAlive
+	}
+}
+
+func WithLastTimeOutResponse(lastTimeoutResponse int) Option {
+	return func(s *Server) {
+		s.LastTimeOutResponse = lastTimeoutResponse
+	}
+}
+
+func WithWieght(wieght int) Option {
+	return func(s *Server) {
+		s.Wieght = wieght
+	}
+}
+
+func WithProxy(proxy *httputil.ReverseProxy) Option {
+	return func(s *Server) {
+		s.Proxy = proxy
+	}
 }
