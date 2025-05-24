@@ -77,7 +77,6 @@ func main() {
 			proxy.ServeHTTP(writer, request.WithContext(ctx))
 
 			balancer(writer, request.WithContext(ctx))
-			time.Sleep(time.Millisecond * 10)
 		}
 		srv.Proxy = proxy
 		lb.AppendServer(srv)

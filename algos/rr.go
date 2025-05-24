@@ -45,7 +45,7 @@ func (_this *RoundRoubin) GetCurrentNode() *types.Server {
 }
 
 func (_this *RoundRoubin) CheckServersHealth(ctx context.Context) {
-	t := time.NewTicker(time.Second * 1)
+	t := time.NewTicker(time.Second * 10)
 	for {
 		select {
 		case <-t.C:
