@@ -67,6 +67,8 @@ func main() {
 			Proxy:               nil,
 		}
 
+		slog.Info("uri", srvUri.String(), srvUri.Host)
+
 		proxy := httputil.NewSingleHostReverseProxy(srvUri)
 		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
 			log.Printf("[%s] %s\n", srvUri.Host, e.Error())
@@ -85,7 +87,7 @@ func main() {
 
 	go lb.CheckServersHealth(ctx)
 	http.HandleFunc("/lb", func(writer http.ResponseWriter, request *http.Request) {
-		go reverseRequest(writer, request)
+		reverseRequest(writer, request)
 	})
 
 	slog.Info("Start Server 0.0.0.0:8082")
