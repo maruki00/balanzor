@@ -1,7 +1,7 @@
 package types
 
 import (
-	"encoding/json"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +12,14 @@ type Config struct {
 }
 
 func NewConfig(path string) *Config {
-
+	yamlData, err := os.ReadFile(path)
+	if err != nil {
+		panic("could not open the config file")
+	}
 	var cfg Config
-	data, err := yaml.Marshal(path)
+	err = yaml.Unmarshal(yamlData, &cfg)
 	if err != nil {
 		panic("could not parse the config")
-	}
-
-	err = json.Unmarshal(data, &cfg)
-	if err != nil {
-		panic("could not marshal the config")
 	}
 	return &cfg
 }

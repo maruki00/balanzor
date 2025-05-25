@@ -34,6 +34,11 @@ func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	cfg := types.NewConfig("config.yaml")
+	fmt.Println(cfg)
+	return
+
 	algo := "round-roubin"
 	// timeOut := 1
 	ctx, cancel := context.WithCancel(context.Background())
