@@ -30,7 +30,7 @@ func (_this *RoundRoubin) GetServer(index int) *types.Server {
 	return _this.Servers[index]
 }
 
-func (_this *RoundRoubin) GetCurrentNode() *types.Server {
+func (_this *RoundRoubin) GetCurrentNode(vals ...string) *types.Server {
 	for i := range _this.ServersLenght {
 		currIndex := (i + _this.CurrentNode) % _this.ServersLenght
 		if !_this.Servers[currIndex].IsAlive || !_this.Servers[currIndex].CheckServerAlive(1) {

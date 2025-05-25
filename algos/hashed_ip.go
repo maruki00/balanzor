@@ -30,7 +30,7 @@ func (_this *WeightedRoundRoubin) GetServer(index int) *types.Server {
 	return _this.Servers[index]
 }
 
-func (_this *WeightedRoundRoubin) GetCurrentNode() *types.Server {
+func (_this *WeightedRoundRoubin) GetCurrentNode(ctx types.BalanzerCtx) *types.Server {
 
 	return nil
 }
