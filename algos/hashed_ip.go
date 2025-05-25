@@ -12,30 +12,30 @@ type HashedIP struct {
 	ServersLenght int
 }
 
-func (_this *WeightedRoundRoubin) AppendServer(server *types.Server) {
+func (_this *HashedIP) AppendServer(server *types.Server) {
 	_this.Servers = append(_this.Servers, server)
 	_this.ServersLenght++
 }
 
-func (_this *WeightedRoundRoubin) SetServers(servers []*types.Server) {
+func (_this *HashedIP) SetServers(servers []*types.Server) {
 	copy(_this.Servers, servers)
 	_this.ServersLenght = len(servers)
 }
 
-func (_this *WeightedRoundRoubin) GetServers() []*types.Server {
+func (_this *HashedIP) GetServers() []*types.Server {
 	return _this.Servers
 }
 
-func (_this *WeightedRoundRoubin) GetServer(index int) *types.Server {
+func (_this *HashedIP) GetServer(index int) *types.Server {
 	return _this.Servers[index]
 }
 
-func (_this *WeightedRoundRoubin) GetCurrentNode(ctx types.BalanzerCtx) *types.Server {
+func (_this *HashedIP) GetCurrentNode(ctx types.BalanzerCtx) *types.Server {
 
 	return nil
 }
 
-func (_this *WeightedRoundRoubin) CheckServersHealth(ctx context.Context) {
+func (_this *HashedIP) CheckServersHealth(ctx context.Context) {
 	t := time.NewTicker(time.Second * 1)
 	for {
 		select {
