@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -11,15 +12,15 @@ type Config struct {
 	Servers []string `yaml:"servers"`
 }
 
-func NewConfig(path string) *Config {
+func NewConfig(path string) (*Config, error) {
 	yamlData, err := os.ReadFile(path)
 	if err != nil {
-		panic("could not open the config file")
+		return nil, errors.New("could not open the config file")
 	}
 	var cfg Config
 	err = yaml.Unmarshal(yamlData, &cfg)
 	if err != nil {
-		panic("could not parse the config")
+		return nil, errors.New("could not parse the config")
 	}
-	return &cfg
+	return &cfg, nil
 }

@@ -34,37 +34,24 @@ func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
-	cfg := types.NewConfig("config.yaml")
-	fmt.Println(cfg)
-	return
-
-	algo := "round-roubin"
-	// timeOut := 1
+	cfg, err := types.NewConfig("config.yaml")
+	if err != nil {
+		panic(err)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	slog.Info("loading ...")
-	srvs := []string{
-		"http://127.0.0.1:9090",
-		"http://127.0.0.1:9091",
-		"http://127.0.0.1:9092",
-		"http://127.0.0.1:9093",
-		"http://127.0.0.1:9094",
-		"http://127.0.0.1:9095",
-	}
-	switch algo {
+	switch cfg.Algo {
 	case "round-roubin":
 		lb = &algos.RoundRoubin{}
 	default:
 		panic("algo not supported")
 	}
-	for _, srv := range srvs {
-
+	for _, srv := range cfg.Servers {
 		srvUri, err := url.Parse(srv)
 		if err != nil {
 			panic("error : " + err.Error())
 		}
-
 		srv := &types.Server{
 			Addr:                srvUri.Host,
 			IsAlive:             false,
@@ -72,9 +59,7 @@ func main() {
 			Wieght:              0,
 			Proxy:               nil,
 		}
-
 		slog.Info("uri", srvUri.String(), srvUri.Host)
-
 		proxy := httputil.NewSingleHostReverseProxy(srvUri)
 		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
 			log.Printf("[%s] %s\n", srvUri.Host, e.Error())
@@ -87,15 +72,11 @@ func main() {
 		srv.Proxy = proxy
 		lb.AppendServer(srv)
 	}
-
 	slog.Info("started")
-
 	go lb.CheckServersHealth(ctx)
 	http.HandleFunc("/lb", func(writer http.ResponseWriter, request *http.Request) {
 		reverseRequest(writer, request)
 	})
-
 	slog.Info("Start Server 0.0.0.0:8082")
 	http.ListenAndServe(":8082", nil)
-
 }
