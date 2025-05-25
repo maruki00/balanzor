@@ -1,4 +1,4 @@
-package algos
+rpackage algos
 
 import (
 	"balazor/types"
