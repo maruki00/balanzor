@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Algo    string
-	Servers []string
+	Algo    string   `yaml:"algo"`
+	Servers []string `yaml:"servers"`
 }
 
 func NewConfig(path string) *Config {
