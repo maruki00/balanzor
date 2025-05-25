@@ -1,4 +1,4 @@
-algo: round-roubin
+algo: weighted-round-roubin
 servers:
   - http://127.0.0.1:9090
   - http://127.0.0.1:9091

@@ -38,7 +38,7 @@ func (_this *RoundRoubin) GetCurrentNode() *types.Server {
 		}
 		_this.CurrentNode = currIndex + 1
 		node := _this.Servers[currIndex]
-		node.Wieght++
+		node.Weight++
 		return node
 	}
 	return nil

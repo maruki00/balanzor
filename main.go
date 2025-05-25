@@ -28,9 +28,9 @@ func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 		rw.Write([]byte("server not available."))
 		return
 	}
-	fmt.Println(curNode.Addr, " --> ", curNode.Wieght)
+	fmt.Println(curNode.Addr, " --> ", curNode.Weight)
 	curNode.Proxy.ServeHTTP(rw, r)
-	curNode.Wieght--
+	curNode.Weight--
 }
 
 func main() {
@@ -40,10 +40,12 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	slog.Info("loading ...")
+	slog.Info("loading ...", cfg.Algo, " algorithm")
 	switch cfg.Algo {
 	case "round-roubin":
 		lb = &algos.RoundRoubin{}
+	case "weighted-round-roubin":
+		lb = &algos.WeightedRoundRoubin{}
 	default:
 		panic("algo not supported")
 	}
@@ -56,7 +58,7 @@ func main() {
 			Addr:                srvUri.Host,
 			IsAlive:             false,
 			LastTimeOutResponse: math.MaxInt,
-			Wieght:              0,
+			Weight:              0,
 			Proxy:               nil,
 		}
 		slog.Info("uri", srvUri.String(), srvUri.Host)

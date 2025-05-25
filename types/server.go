@@ -13,7 +13,7 @@ type Server struct {
 	Addr                string
 	IsAlive             bool
 	LastTimeOutResponse int
-	Wieght              int
+	Weight              int
 	Proxy               *httputil.ReverseProxy
 }
 
@@ -22,7 +22,7 @@ func NewServer(options ...Option) *Server {
 		Addr:                "127.0.0.1",
 		IsAlive:             false,
 		LastTimeOutResponse: 0,
-		Wieght:              0,
+		Weight:              0,
 		Proxy:               nil,
 	}
 
@@ -71,9 +71,9 @@ func WithLastTimeOutResponse(lastTimeoutResponse int) Option {
 	}
 }
 
-func WithWieght(wieght int) Option {
+func WithWeight(wieght int) Option {
 	return func(s *Server) {
-		s.Wieght = wieght
+		s.Weight = wieght
 	}
 }
 

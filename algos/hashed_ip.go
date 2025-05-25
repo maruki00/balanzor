@@ -1,0 +1,58 @@
+package algos
+
+import (
+	"balazor/types"
+	"context"
+	"hash/fnv"
+	"time"
+)
+
+type HashedIP struct {
+	Servers      []*types.Server
+	ServersLengh int
+}
+
+func (_this *WeightedRoundRoubin) AppendServer(server *types.Server) {
+	_this.Servers = append(_this.Servers, server)
+	_this.ServersLenght++
+}
+
+func (_this *WeightedRoundRoubin) SetServers(servers []*types.Server) {
+	copy(_this.Servers, servers)
+	_this.ServersLenght = len(servers)
+}
+
+func (_this *WeightedRoundRoubin) GetServers() []*types.Server {
+	return _this.Servers
+}
+
+func (_this *WeightedRoundRoubin) GetServer(index int) *types.Server {
+	return _this.Servers[index]
+}
+
+func (_this *WeightedRoundRoubin) GetCurrentNode() *types.Server {
+
+	return nil
+}
+
+func (_this *WeightedRoundRoubin) CheckServersHealth(ctx context.Context) {
+	t := time.NewTicker(time.Second * 1)
+	for {
+		select {
+		case <-t.C:
+			for _, srv := range _this.GetServers() {
+				_ = srv.CheckServerAlive(1)
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+// utils
+
+func (_this *HashedIP) hashIP(ip string) int {
+	hash := fnv.New32()
+	hash.Write([]byte(ip))
+	return int(hash.Sum32()) % _this.ServersLenght
+}
