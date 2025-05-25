@@ -31,8 +31,9 @@ func (_this *HashedIP) GetServer(index int) *types.Server {
 }
 
 func (_this *HashedIP) GetCurrentNode(ctx types.BalanzerCtx) *types.Server {
-
-	return nil
+	ip := ctx.IP
+	currNode := _this.Servers[_this.hashIP(ip)]
+	return currNode
 }
 
 func (_this *HashedIP) CheckServersHealth(ctx context.Context) {

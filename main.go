@@ -23,7 +23,10 @@ func balancer(rw http.ResponseWriter, r *http.Request) {
 }
 
 func reverseRequest(rw http.ResponseWriter, r *http.Request) {
-	curNode := lb.GetCurrentNode()
+	curNode := lb.GetCurrentNode(types.BalanzerCtx{
+		Ctx: context.TODO(),
+		IP:  r.Host,
+	})
 	if curNode == nil {
 		rw.Write([]byte("server not available."))
 		return
@@ -46,8 +49,11 @@ func main() {
 		lb = &algos.RoundRoubin{}
 	case "weighted-round-roubin":
 		lb = &algos.WeightedRoundRoubin{}
+	case "hashed-ip":
+		lb = &algos.HashedIP{}
 	default:
-		panic("algo not supported")
+		slog.Error("algo not supported")
+		return
 	}
 	for _, srv := range cfg.Servers {
 		srvUri, err := url.Parse(srv)
