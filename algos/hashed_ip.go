@@ -8,8 +8,8 @@ import (
 )
 
 type HashedIP struct {
-	Servers      []*types.Server
-	ServersLengh int
+	Servers       []*types.Server
+	ServersLenght int
 }
 
 func (_this *WeightedRoundRoubin) AppendServer(server *types.Server) {
