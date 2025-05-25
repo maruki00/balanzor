@@ -21,6 +21,7 @@ var (
 func balancer(rw http.ResponseWriter, r *http.Request) {
 	go reverseRequest(rw, r)
 }
+
 func reverseRequest(rw http.ResponseWriter, r *http.Request) {
 	curNode := lb.GetCurrentNode()
 	if curNode == nil {
