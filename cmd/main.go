@@ -1,7 +1,7 @@
 package main
 
 import (
-	balanzor "github.com/maruki00/balanzor"
+	"github.com/maruki00/balanzor"
 	"github.com/maruki00/balanzor/types"
 )
 
