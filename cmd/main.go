@@ -1,8 +1,6 @@
 package main
 
 import (
-	"balazor/algos"
-	"balazor/types"
 	"context"
 	"fmt"
 	"log"
@@ -12,6 +10,9 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"time"
+
+	"github.com/maruki00/balazor/algos"
+	"github.com/maruki00/balazor/types"
 )
 
 var (

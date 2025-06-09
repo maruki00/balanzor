@@ -1,4 +1,4 @@
-# Balanzor
+# github.com/maruki00/balazor
 
 Used Algorithms
 

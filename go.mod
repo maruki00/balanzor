@@ -1,4 +1,4 @@
-module balazor
+module github.com/maruki00/balazor
 
 go 1.24.2
 
