@@ -62,11 +62,7 @@ func (_this *Balanazor) reverseRequest(rw http.ResponseWriter, r *http.Request) 
 func (_this *Balanazor) Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	cfg, err := types.NewConfig("config.yaml")
-	if err != nil {
-		panic(err)
-	}
-	slog.Info("loading ...", cfg.Algo, " algorithm")
+	slog.Info("loading ...", _this.algorithm, " algorithm")
 	switch _this.algorithm {
 	case "round-roubin":
 		lb = &algos.RoundRoubin{}
