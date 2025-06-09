@@ -1,8 +1,9 @@
 package algos
 
 import (
-	"balazor/types"
 	"context"
+
+	"github.com/maruki00/balazor/types"
 )
 
 type Algo interface {

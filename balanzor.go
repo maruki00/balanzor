@@ -105,7 +105,7 @@ func (_this *Balanazor) Run() error {
 	http.HandleFunc(_this.endpoint, func(writer http.ResponseWriter, request *http.Request) {
 		_this.reverseRequest(writer, request)
 	})
-	slog.Info("Start Server ", _this.addr)
+	slog.Info("Start Server ", "server", _this.addr)
 	return http.ListenAndServe(_this.addr, nil)
 
 }

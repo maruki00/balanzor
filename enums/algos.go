@@ -1,5 +1,5 @@
 package enums
 
-const {
+const (
 	ROUND_ROUBIN = "round-roubin"
-}
+)

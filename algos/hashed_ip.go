@@ -1,10 +1,11 @@
 package algos
 
 import (
-	"balazor/types"
 	"context"
 	"hash/fnv"
 	"time"
+
+	"github.com/maruki00/balazor/types"
 )
 
 type HashedIP struct {

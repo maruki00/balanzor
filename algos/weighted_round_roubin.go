@@ -1,9 +1,10 @@
 package algos
 
 import (
-	"balazor/types"
 	"context"
 	"time"
+
+	"github.com/maruki00/balazor/types"
 )
 
 type WeightedRoundRoubin struct {
