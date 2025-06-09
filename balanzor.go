@@ -1,12 +1,8 @@
 package balanzor
 
-import "errors"
-
-
-package main
-
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -23,11 +19,12 @@ import (
 var (
 	lb algos.Algo
 )
+
 type Balanazor struct {
-	backends []string
+	backends  []string
 	algorithm string
-	addr string
-	endpoint string
+	addr      string
+	endpoint  string
 }
 
 func NewBalanzor(
@@ -37,10 +34,10 @@ func NewBalanzor(
 	endpoint string,
 ) *Balanazor {
 	return &Balanazor{
-		backends:backends,
-		algorithm:algorithm,
-		addr:addr,
-		endpoint:endpoint,
+		backends:  backends,
+		algorithm: algorithm,
+		addr:      addr,
+		endpoint:  endpoint,
 	}
 }
 
@@ -62,15 +59,13 @@ func (_this *Balanazor) reverseRequest(rw http.ResponseWriter, r *http.Request) 
 	curNode.Weight--
 }
 
-func (_this *Balanazor)Run() error {
-ctx, cancel := context.WithCancel(context.Background())
+func (_this *Balanazor) Run() error {
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	cfg, err := types.NewConfig("config.yaml")
 	if err != nil {
 		panic(err)
 	}
-	
 	slog.Info("loading ...", cfg.Algo, " algorithm")
 	switch _this.algorithm {
 	case "round-roubin":
@@ -98,10 +93,8 @@ ctx, cancel := context.WithCancel(context.Background())
 		proxy := httputil.NewSingleHostReverseProxy(srvUri)
 		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
 			log.Printf("[%s] %s\n", srvUri.Host, e.Error())
-
 			<-time.After(10 * time.Millisecond)
 			proxy.ServeHTTP(writer, request.WithContext(ctx))
-
 			_this.balancer(writer, request.WithContext(ctx))
 		}
 		srv.Proxy = proxy
@@ -110,8 +103,9 @@ ctx, cancel := context.WithCancel(context.Background())
 	slog.Info("started")
 	go lb.CheckServersHealth(ctx)
 	http.HandleFunc(_this.endpoint, func(writer http.ResponseWriter, request *http.Request) {
-		reverseRequest(writer, request)
+		_this.reverseRequest(writer, request)
 	})
 	slog.Info("Start Server ", _this.addr)
-	http.ListenAndServe(_this.addr, nil)
+	return http.ListenAndServe(_this.addr, nil)
+
 }
