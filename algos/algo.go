@@ -3,7 +3,7 @@ package algos
 import (
 	"context"
 
-	"github.com/maruki00/balazor/types"
+	"github.com/maruki00/balanzor/types"
 )
 
 type Algo interface {

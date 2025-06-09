@@ -1,8 +1,8 @@
 package main
 
 import (
-	balanzor "github.com/maruki00/balazor"
-	"github.com/maruki00/balazor/types"
+	balanzor "github.com/maruki00/balanzor"
+	"github.com/maruki00/balanzor/types"
 )
 
 func main() {

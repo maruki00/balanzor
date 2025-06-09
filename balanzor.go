@@ -12,8 +12,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/maruki00/balazor/algos"
-	"github.com/maruki00/balazor/types"
+	"github.com/maruki00/balanzor/algos"
+	"github.com/maruki00/balanzor/types"
 )
 
 var (

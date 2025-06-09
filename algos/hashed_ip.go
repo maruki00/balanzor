@@ -5,7 +5,7 @@ import (
 	"hash/fnv"
 	"time"
 
-	"github.com/maruki00/balazor/types"
+	"github.com/maruki00/balanzor/types"
 )
 
 type HashedIP struct {
