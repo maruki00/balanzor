@@ -9,7 +9,7 @@ import (
 
 type Option func(*Server)
 type Server struct {
-	sync.RWMutex
+	mu                  sync.RWMutex
 	Addr                string
 	IsAlive             bool
 	LastTimeOutResponse int
@@ -33,8 +33,8 @@ func NewServer(options ...Option) *Server {
 }
 
 func (_this *Server) CheckServerAlive(timeOut int) bool {
-	_this.Lock()
-	defer _this.Unlock()
+	_this.mu.Lock()
+	defer _this.mu.Unlock()
 	ATTEMPTS := 3
 
 	_this.IsAlive = false

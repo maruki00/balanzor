@@ -21,10 +21,11 @@ var (
 )
 
 type Balanazor struct {
-	backends  []string
-	algorithm string
-	addr      string
-	endpoint  string
+	backends         []string
+	algorithm        string
+	addr             string
+	endpoint         string
+	healthCheckDelay int
 }
 
 func NewBalanzor(
@@ -32,12 +33,14 @@ func NewBalanzor(
 	algorithm string,
 	addr string,
 	endpoint string,
+	delay int,
 ) *Balanazor {
 	return &Balanazor{
-		backends:  backends,
-		algorithm: algorithm,
-		addr:      addr,
-		endpoint:  endpoint,
+		backends:         backends,
+		algorithm:        algorithm,
+		addr:             addr,
+		endpoint:         endpoint,
+		healthCheckDelay: delay,
 	}
 }
 
