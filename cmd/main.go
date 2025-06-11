@@ -2,14 +2,13 @@ package main
 
 import (
 	"github.com/maruki00/balanzor"
-	"github.com/maruki00/balanzor/types"
 )
 
 func main() {
-	cfg, err := types.NewConfig("config.yaml")
-	if err != nil {
-		panic(err)
-	}
-	lb := balanzor.NewBalanzor(cfg.Servers, cfg.Algo, "0.0.0.0:9999", "/lb")
+	// backends := []types.Server{}
+
+	servers := []string{"http://localhost:9090", "http://localhost:9091", "http://localhost:9092"}
+	algo := "round-roubin"
+	lb := balanzor.NewBalanzor(servers, algo, "0.0.0.0:9999", "/lb")
 	lb.Run()
 }
