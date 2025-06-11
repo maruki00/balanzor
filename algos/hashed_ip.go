@@ -51,8 +51,6 @@ func (_this *HashedIP) CheckServersHealth(ctx context.Context) {
 	}
 }
 
-// utils
-
 func (_this *HashedIP) hashIP(ip string) int {
 	hash := fnv.New32()
 	hash.Write([]byte(ip))
