@@ -56,3 +56,6 @@ func (_this *HashedIP) hashIP(ip string) int {
 	hash.Write([]byte(ip))
 	return int(hash.Sum32()) % _this.ServersLenght
 }
+
+
+

@@ -8,6 +8,7 @@ import (
 )
 
 type Option func(*Server)
+
 type Server struct {
 	mu                  sync.RWMutex
 	Addr                string
@@ -19,7 +20,7 @@ type Server struct {
 
 func NewServer(options ...Option) *Server {
 	s := Server{
-		Addr:                "127.0.0.1",
+		Addr:                "127.0.0.1:9090",
 		IsAlive:             false,
 		LastTimeOutResponse: 0,
 		Weight:              0,

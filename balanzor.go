@@ -59,7 +59,6 @@ func (_this *Balanazor) reverseRequest(rw http.ResponseWriter, r *http.Request) 
 	}
 	fmt.Println(curNode.Addr, " --> ", curNode.Weight)
 	curNode.Proxy.ServeHTTP(rw, r)
-	curNode.Weight--
 }
 
 func (_this *Balanazor) Run() error {
